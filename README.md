@@ -1,5 +1,5 @@
-## GwentServer
-#Scripts
+# GwentServer
+## Scripts
 Build TypeScript to JavaScript:
 ```
 npm run-script build
