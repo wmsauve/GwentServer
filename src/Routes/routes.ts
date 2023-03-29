@@ -1,6 +1,7 @@
 import { Router } from 'express'
 import { UserModel } from '../DB/schema'
 import bcrypt from 'bcrypt'
+import { ResponseToClient } from '../Utility/structures'
 
 const router = Router()
 const saltRounds = 10;
@@ -17,29 +18,29 @@ const saltRounds = 10;
 // });
 
 //Add endpoints to .env
-router.post('/api' + '/generateUser', (req, res) => {
-    const { username, password } = req.body
-
-    let hashedPassword = hashPassword(password);
-
-    hashedPassword.then(data => {
-        let user = new UserModel({
-            username: username,
-            password: data
-        })
-        user.save().then(() => {
-            console.log("User saved to database")
-            res.send("User created successfully!")
-        }).
-        catch((err) =>{
-            console.error(err)
-            res.send(err);
-        })
-    }).catch(err => {
-        console.error(err)
-        res.send(err);
-    })
-})
+router.post('/api' + '/generateUser', async (req, res) => {
+    const { username, password } = req.body;
+  
+    try {
+      const _user = await CheckForValidUsername(username);
+  
+      if (_user) {
+        return res.send(CreateResponseToClient(false, "That user already exists."));
+      }
+  
+      const hashedPassword = await hashPassword(password);
+      const user = new UserModel({
+        username: username,
+        password: hashedPassword
+      });
+  
+      await user.save();
+      res.send(CreateResponseToClient(true, "Welcome to Gwent " + username));
+    } catch (err) {
+      console.error(err);
+      res.send(CreateResponseToClient(false, err));
+    }
+  });
 
 router.post('/api' + '/login', (req, res) =>{
     const { username, password } = req.body
@@ -49,22 +50,20 @@ router.post('/api' + '/login', (req, res) =>{
         let compare = comparePasswords(password, user.password)
         compare.then(data =>{
             if(data){
-                console.log("Login successful.")
-                res.send("Login successful.")
+                res.send(CreateResponseToClient(true, "Login successful."))
             }
             else{
-                console.log("Invalid password.")
-                res.send("Invalid password.")
+                res.send(CreateResponseToClient(false, "Invalid password."))
             }
         }).
         catch(err => {
             console.log(err)
+            res.send(CreateResponseToClient(false, "An error occurred, please try again later."))
         })
     }). 
     catch(err =>{
         console.log(err)
-        console.log("User: " + username + " not found.")
-        res.send("User: " + username + " not found.")
+        res.send(CreateResponseToClient(false, "User: " + username + " not found."))
     })
 })
 
@@ -77,6 +76,26 @@ async function hashPassword(password: string): Promise<string> {
 async function comparePasswords(password: string, hash: string): Promise<boolean> {
     const match = await bcrypt.compare(password, hash);
     return match;
+}
+
+async function CheckForValidUsername(username: string){
+    try{
+        const _user = await UserModel.findOne({username: username})
+        return _user
+    }
+    catch(err){
+        console.error(err)
+        throw err
+    }
+}
+
+function CreateResponseToClient(success: boolean, message: string): string {
+    let toClient: ResponseToClient = {
+        isSuccess: success,
+        message: message,
+    };
+    console.log(message)
+    return JSON.stringify(toClient);
 }
 
 export default router
