@@ -1,6 +1,6 @@
-interface ResponseToClient{
+interface IResponseToClient{
     message: string;
     isSuccess: boolean;
 }
 
-export { ResponseToClient }
+export { IResponseToClient }
