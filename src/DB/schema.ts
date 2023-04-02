@@ -66,7 +66,7 @@ const userSchema = new Schema({
     },
 })
 
-const UserModel = mongoose.model<IUser>('User', userSchema, 'users');
-const SavedDeckModel = mongoose.model<IDeckSave>('DeckSave', savedDecksSchema, 'savedDecks')
+const UserModel = mongoose.model<IUser>('UserModel', userSchema, 'users');
+const SavedDeckModel = mongoose.model<IDeckSave>('SavedDeckModel', savedDecksSchema, 'savedDecks')
 
 export { UserModel, SavedDeckModel, IDeck, IDeckSave, IUser };
