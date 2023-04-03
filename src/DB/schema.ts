@@ -6,6 +6,7 @@ interface ICard {
   
 interface IDeck {
     name: string;
+    isCurrent: boolean;
     cards: ICard[];
 }
 
@@ -31,6 +32,10 @@ const cardSchema = new Schema({
 const deckSchema = new Schema({
     name: {
         type: String,
+        required: true,
+    },
+    isCurrent: {
+        type: Boolean,
         required: true,
     },
     cards: {
