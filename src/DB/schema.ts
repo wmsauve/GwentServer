@@ -34,6 +34,10 @@ const deckSchema = new Schema({
         type: String,
         required: true,
     },
+    leaderName: {
+        type: String,
+        required: true,
+    },
     isCurrent: {
         type: Boolean,
         required: true,
