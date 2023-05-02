@@ -1,13 +1,16 @@
-import { Router } from 'express'
-import { controls } from '../Controllers/UserRelated'
+import { Router } from 'express';
+import { userCtrl } from '../Controllers/UserRelated';
+import { serverCtrl } from '../Controllers/ServerRelated';
 
-const router = Router()
+const router = Router();
 
 //Add endpoints to .env
-router.post('/api' + '/generateUser', controls.signUp)
+router.post('/api' + '/generateUser', userCtrl.signUp);
 
-router.post('/api' + '/login', controls.loginUser)
+router.post('/api' + '/login', userCtrl.loginUser);
 
-router.post('/api' + '/saveDecks', controls.saveDecks)
+router.post('/api' + '/saveDecks', userCtrl.saveDecks);
 
-export default router
+router.post('/apiServer' + '/fetchDeckByUser', serverCtrl.fetchDeckByUser);
+
+export default router;

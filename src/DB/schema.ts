@@ -1,25 +1,25 @@
-import mongoose, {Schema, Document} from 'mongoose'
+import mongoose, {Schema, Document} from 'mongoose';
 
 interface ICard {
     name: string;
-}
+};
   
 interface IDeck {
     name: string;
     isCurrent: boolean;
     cards: ICard[];
-}
+};
 
 interface IDeckSave extends Document{
     user: Schema.Types.ObjectId;
     decks: IDeck[];
-}
+};
 
 interface IUser extends Document {
     username: string,
     password: string,
     myDecks: Schema.Types.ObjectId | IDeckSave
-}
+};
 
 
 const cardSchema = new Schema({
@@ -27,7 +27,7 @@ const cardSchema = new Schema({
         type: String,
         required: true,
     }
-})
+});
 
 const deckSchema = new Schema({
     name: {
@@ -46,7 +46,7 @@ const deckSchema = new Schema({
         type: [cardSchema],
         default: []
     }
-})
+});
 
 const savedDecksSchema = new Schema({
     user: {
@@ -58,7 +58,7 @@ const savedDecksSchema = new Schema({
         default: []
     }
 
-})
+});
 
 const userSchema = new Schema({
     username: { 
@@ -73,9 +73,9 @@ const userSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: "SavedDeckModel"
     },
-})
+});
 
 const UserModel = mongoose.model<IUser>('UserModel', userSchema, 'users');
-const SavedDeckModel = mongoose.model<IDeckSave>('SavedDeckModel', savedDecksSchema, 'savedDecks')
+const SavedDeckModel = mongoose.model<IDeckSave>('SavedDeckModel', savedDecksSchema, 'savedDecks');
 
 export { UserModel, SavedDeckModel, IDeck, IDeckSave, IUser };
